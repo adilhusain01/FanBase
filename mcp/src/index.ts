@@ -27,6 +27,15 @@ server.registerTool("verify_score_commitment", {
   return text({ valid: actual === commitment, expectedCommitment: actual });
 });
 
+server.registerTool("explain_anti_scalping_controls", {
+  title: "Explain access-pass controls",
+  description: "Describes the FanBase pass contract’s issuer-only issue/revoke lifecycle and non-transferability.",
+  annotations: { readOnlyHint: true },
+}, async () => text({
+  contract: "FanBasePass",
+  controls: ["Only issuer can issue or revoke.", "Holder-to-holder transfer reverts.", "Approvals and operator approvals revert.", "A licensed organizer reissues a new pass only after its official exchange process."],
+}));
+
 server.registerTool("get_live_world_cup_match", {
   title: "Get live World Cup match",
   description: "Reads the public current FIFA World Cup match feed. It has no write capability.",
