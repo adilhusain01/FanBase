@@ -9,13 +9,14 @@ pnpm install
 pnpm dev
 ```
 
-Open `http://localhost:3000`. The match card reads the live FIFA World Cup scoreboard at request time; if the provider is unavailable, it intentionally shows no invented fixture.
+Open `http://localhost:3000`. The match card reads football-data.org's World Cup feed when `FOOTBALL_DATA_API_TOKEN` is configured, with FIFA's official calendar API as fallback. If both are unavailable, it intentionally shows no invented fixture.
 
 ## Real integrations
 
-Copy `.env.example` to `.env.local` and set `X402_PAY_TO` to activate the `POST /api/pay` x402 route on Injective EVM testnet (`eip155:1439`). Without it, payment fails closed with `503`; it never pretends that a deposit occurred.
+Copy `.env.example` to `.env.local`, set `FOOTBALL_DATA_API_TOKEN` for the primary fixture feed, and set `X402_PAY_TO` to activate the `POST /api/pay` x402 route on Injective EVM testnet (`eip155:1439`). Without a recipient, payment fails closed with `503`; it never pretends that a deposit occurred.
 
 - `POST /api/application` validates a wallet-bound application and creates a deterministic score commitment.
+- `GET /api/matches` returns the current final from football-data.org or FIFA's official fallback.
 - `POST /api/pay` is wrapped with `@x402/next` when the recipient is configured.
 - Wallet connection uses Wagmi + the Injective testnet chain definition from Viem.
 

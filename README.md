@@ -21,6 +21,16 @@ cd ../mcp && pnpm install && pnpm dev
 
 Copy `web/.env.example` to `web/.env.local` and set real provider credentials before enabling payments or public-post evidence. FanBase intentionally does not fabricate fixture data, X posts, AI scores, or payment receipts when those integrations are unavailable.
 
+## Fixture data
+
+FanBase reads World Cup fixtures from football-data.org when `FOOTBALL_DATA_API_TOKEN` is present, then falls back to FIFA's official calendar API. As verified on 17 July 2026, both sources return the final as Spain v Argentina at `2026-07-19T19:00:00Z`—20 July, 12:30 AM IST. The UI links to the provider that supplied the displayed fixture.
+
+```bash
+# web/.env.local (never commit this file)
+FOOTBALL_DATA_API_TOKEN=your_football_data_token
+X402_PAY_TO=0xYourInjectiveTestnetRecipient
+```
+
 Deploy the test pass with a test-only signer held in your shell (never commit it):
 
 ```bash
