@@ -18,4 +18,4 @@ export const POST = x402Enabled ? withX402(handler, {
     payTo: x402PayTo!,
   },
   description: "FanBase refundable allocation deposit",
-}, createX402Server()) : unconfigured;
+}, createX402Server(), undefined, undefined, false) : unconfigured;

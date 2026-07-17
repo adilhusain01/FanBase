@@ -45,7 +45,7 @@ cd ../mcp && pnpm build
 
 1. Open `http://localhost:3000` and confirm the match card shows Spain v Argentina at 20 July, 12:30 AM in an India timezone.
 2. In MetaMask, add/switch to Injective EVM Testnet (chain ID `1439`) and connect. The app offers a network-switch button if the wallet is on another network.
-3. Click **Create application**. Leave X evidence unchecked for a deterministic neutral-score test that does not require any additional provider credentials.
+3. Click **Enter draw**. Leave X evidence unchecked for a deterministic neutral-score test that does not require any additional provider credentials.
 4. Verify a weighted draw with the public endpoint:
 
 ```bash
