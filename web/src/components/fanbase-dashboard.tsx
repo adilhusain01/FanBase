@@ -62,9 +62,9 @@ export function FanBaseDashboard({ match }: { match: Match | null }) {
     <section id="apply" className="application-section">
       <div className="section-heading"><p className="eyebrow">Live allocation</p><h2>Enter without the panic refresh.</h2><p>Live match data updates from ESPN. FanBase is a prototype, not an official FIFA ticket seller.</p></div>
       {match ? <div className="match-card">
-        <div className="match-meta"><span>{match.stage}</span><span>{new Intl.DateTimeFormat("en", { dateStyle: "full", timeStyle: "short", timeZone: "UTC" }).format(new Date(match.date))} UTC</span></div>
+        <div className="match-meta"><span>{match.stage}</span><span>{new Intl.DateTimeFormat("en", { dateStyle: "full", timeStyle: "short" }).format(new Date(match.date))}</span></div>
         <div className="teams">{match.teams.map((team, index) => <div className="team" key={team.abbreviation}><div className="crest">{team.logo ? <Image src={team.logo} alt="" width={52} height={52} /> : team.abbreviation}</div><strong>{team.name}</strong><small>{team.player ? `${team.player} watch` : "Team evidence"}</small>{index === 0 && <span className="versus">VS</span>}</div>)}</div>
-        <div className="match-footer"><span>{match.venue}</span><a href="https://www.espn.com/soccer/league/_/name/fifa.world" target="_blank" rel="noreferrer">Live source <ExternalLink size={13} /></a></div>
+        <div className="match-footer"><span>{match.venue}</span><a href={match.sourceUrl} target="_blank" rel="noreferrer">{match.sourceName} <ExternalLink size={13} /></a></div>
       </div> : <div className="unavailable"><CircleAlert size={20} /><div><strong>Live match data is unavailable right now.</strong><p>We do not replace it with made-up fixtures. Retry shortly.</p></div></div>}
 
       <div className="apply-grid">
