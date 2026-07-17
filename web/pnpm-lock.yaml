@@ -17,6 +17,9 @@ importers:
       '@x402/evm':
         specifier: ^2.18.0
         version: 2.18.0(typescript@5.9.3)
+      '@x402/fetch':
+        specifier: ^2.18.0
+        version: 2.18.0
       '@x402/next':
         specifier: ^2.18.0
         version: 2.18.0(next@16.2.10(@babel/core@7.29.7)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(typescript@5.9.3)
@@ -977,6 +980,9 @@ packages:
 
   '@x402/extensions@2.18.0':
     resolution: {integrity: sha512-Hahl0ZhHVyxIyDzNS1xCsDIzwDvkHRapdmH1fJbboEYvgNIeOToMLR+VG8kh1oJSdw/5RRgt3RpMqHnwvxgAGQ==}
+
+  '@x402/fetch@2.18.0':
+    resolution: {integrity: sha512-yuFLM8pIOWUNmbRwQpnO1az4IauW7dJ3yNDJkMkUkMXHLWLMeFwSwsqsRYBG7DEXcQCnb6iKY4Wps/qXUrcYOQ==}
 
   '@x402/next@2.18.0':
     resolution: {integrity: sha512-0BulOMu/qE+6anrQ1/xQTsgrcdXEPRPOOrubkpxcQAT6lb90HOOstFm4gFx9qShURWO36rBsnHNOHhlQAxL+Mw==}
@@ -3333,6 +3339,10 @@ snapshots:
       - ethers
       - typescript
       - utf-8-validate
+
+  '@x402/fetch@2.18.0':
+    dependencies:
+      '@x402/core': 2.18.0
 
   '@x402/next@2.18.0(next@16.2.10(@babel/core@7.29.7)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(typescript@5.9.3)':
     dependencies:

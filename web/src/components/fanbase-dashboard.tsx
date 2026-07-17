@@ -1,10 +1,12 @@
 "use client";
 
 import type { Match } from "@/lib/world-cup";
+import { x402Client, wrapFetchWithPayment } from "@x402/fetch";
+import { ExactEvmScheme } from "@x402/evm/exact/client";
 import Image from "next/image";
 import { Check, ChevronRight, CircleAlert, ExternalLink, Fingerprint, LoaderCircle, LockKeyhole, ShieldCheck, Trophy, Wallet } from "lucide-react";
 import { useState } from "react";
-import { useAccount, useChainId, useConnect, useDisconnect, useSwitchChain } from "wagmi";
+import { useAccount, useChainId, useConnect, useDisconnect, useSwitchChain, useWalletClient } from "wagmi";
 import { injectiveTestnet } from "viem/chains";
 
 type Application = { score: number; weight: number; commitment: string; explanation: string };
@@ -16,6 +18,7 @@ export function FanBaseDashboard({ match }: { match: Match | null }) {
   const { disconnect } = useDisconnect();
   const chainId = useChainId();
   const { switchChain, isPending: isSwitching } = useSwitchChain();
+  const { data: walletClient } = useWalletClient();
   const [consent, setConsent] = useState(false);
   const [handle, setHandle] = useState("");
   const [application, setApplication] = useState<Application | null>(null);
@@ -33,11 +36,22 @@ export function FanBaseDashboard({ match }: { match: Match | null }) {
   }
 
   async function startPayment() {
+    if (!address || !walletClient) return setNotice("Connect your wallet before paying the deposit.");
     setBusy(true); setNotice(null);
-    const response = await fetch("/api/pay", { method: "POST" });
-    const body = await response.json() as { error?: string };
-    setBusy(false);
-    setNotice(response.ok ? "Deposit settled. Your application is committed." : body.error ?? "Payment could not be initiated.");
+    try {
+      const client = new x402Client();
+      client.register("eip155:1439", new ExactEvmScheme({
+        address,
+        signTypedData: (message) => walletClient.signTypedData({ account: address, ...message }),
+      }));
+      const response = await wrapFetchWithPayment(fetch, client)("/api/pay", { method: "POST" });
+      const body = await response.json() as { error?: string };
+      setNotice(response.ok ? "Deposit settled. Your application is committed." : body.error ?? "Payment could not be initiated.");
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Payment could not be initiated.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return <main className="shell">
@@ -60,7 +74,7 @@ export function FanBaseDashboard({ match }: { match: Match | null }) {
     <section className="trust-strip" aria-label="Product promises"><div><ShieldCheck size={19} /><span><strong>Rules locked</strong> before entries close</span></div><div><Fingerprint size={19} /><span><strong>One person</strong> per allocation</span></div><div><LockKeyhole size={19} /><span><strong>Non-transferable</strong> access pass</span></div></section>
 
     <section id="apply" className="application-section">
-      <div className="section-heading"><p className="eyebrow">Live allocation</p><h2>Enter without the panic refresh.</h2><p>Live match data updates from ESPN. FanBase is a prototype, not an official FIFA ticket seller.</p></div>
+      <div className="section-heading"><p className="eyebrow">Live allocation</p><h2>Enter without the panic refresh.</h2><p>Fixtures refresh from football-data.org, with FIFA’s official calendar as fallback. FanBase is a prototype, not an official FIFA ticket seller.</p></div>
       {match ? <div className="match-card">
         <div className="match-meta"><span>{match.stage}</span><span>{new Intl.DateTimeFormat("en", { dateStyle: "full", timeStyle: "short" }).format(new Date(match.date))}</span></div>
         <div className="teams">{match.teams.map((team, index) => <div className="team" key={team.abbreviation}><div className="crest">{team.logo ? <Image src={team.logo} alt="" width={52} height={52} /> : team.abbreviation}</div><strong>{team.name}</strong><small>{team.player ? `${team.player} watch` : "Team evidence"}</small>{index === 0 && <span className="versus">VS</span>}</div>)}</div>

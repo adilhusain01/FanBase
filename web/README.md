@@ -13,11 +13,11 @@ Open `http://localhost:3000`. The match card reads football-data.org's World Cup
 
 ## Real integrations
 
-Copy `.env.example` to `.env.local`, set `FOOTBALL_DATA_API_TOKEN` for the primary fixture feed, and set `X402_PAY_TO` to activate the `POST /api/pay` x402 route on Injective EVM testnet (`eip155:1439`). Without a recipient, payment fails closed with `503`; it never pretends that a deposit occurred.
+Copy `.env.example` to `.env.local`, set `FOOTBALL_DATA_API_TOKEN` for the primary fixture feed, and set `X402_PAY_TO`, `X402_FACILITATOR_URL`, and `X402_USDC_ADDRESS` to activate the `POST /api/pay` x402 route on Injective EVM testnet (`eip155:1439`). The repository's sibling [`../facilitator`](../facilitator) directory supplies the required self-hosted x402 facilitator. Until that service is configured, payment fails closed with `503`; it never pretends that a deposit occurred.
 
 - `POST /api/application` validates a wallet-bound application and creates a deterministic score commitment.
 - `GET /api/matches` returns the current final from football-data.org or FIFA's official fallback.
-- `POST /api/pay` is wrapped with `@x402/next` when the recipient is configured.
+- `POST /api/pay` is wrapped with `@x402/next` and charges exactly 5 USDC (`5000000` atomic units) using Circle's native Injective testnet USDC contract.
 - Wallet connection uses Wagmi + the Injective testnet chain definition from Viem.
 
 The production design, security policy, fair draw algorithm, CCTP path, permissioned pass, and MCP scope are in [`../plan/README.md`](../plan/README.md).
