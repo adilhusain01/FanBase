@@ -9,9 +9,17 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.101.2",
+    "@x402/core": "^2.18.0",
+    "@x402/evm": "^2.18.0",
+    "@x402/next": "^2.18.0",
+    "lucide-react": "^1.25.0",
     "next": "16.2.10",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "viem": "^2.55.2",
+    "wagmi": "^3.7.2",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
