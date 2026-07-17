@@ -22,6 +22,7 @@ const mono = DM_Mono({
 export const metadata: Metadata = {
   title: "FanBase — Fair access for real fans",
   description: "A verifiable, anti-scalping allocation flow for major football matches.",
+  icons: { icon: "/fanbase-football.png" },
 };
 
 export default function RootLayout({

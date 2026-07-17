@@ -39,7 +39,7 @@ export function FanBaseDashboard({ match }: { match: Match | null }) {
 
   return <main className="shell">
     <nav className="topbar" aria-label="Primary navigation">
-      <a className="brand" href="#top"><span>F</span> FanBase</a>
+      <a className="brand" href="#top"><span><Image src="/fanbase-football.png" alt="" width={27} height={27} priority /></span> FanBase</a>
       <div className="nav-links"><a href="#fairness">Fairness</a><a href="#how-it-works">How it works</a></div>
       {isConnected ? <button className="wallet connected" onClick={() => disconnect()}><span className="status-dot" />{short(address!)}</button> : <button className="wallet" disabled={isPending} onClick={() => connectors[0] && connect({ connector: connectors[0] })}><Wallet size={16} />{isPending ? "Connecting" : "Connect wallet"}</button>}
     </nav>
