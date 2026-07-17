@@ -4,7 +4,8 @@ import type { Match } from "@/lib/world-cup";
 import Image from "next/image";
 import { Check, ChevronRight, CircleAlert, ExternalLink, Fingerprint, LoaderCircle, LockKeyhole, ShieldCheck, Trophy, Wallet } from "lucide-react";
 import { useState } from "react";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useAccount, useChainId, useConnect, useDisconnect, useSwitchChain } from "wagmi";
+import { injectiveTestnet } from "viem/chains";
 
 type Application = { score: number; weight: number; commitment: string; explanation: string };
 const short = (value: string) => `${value.slice(0, 6)}…${value.slice(-4)}`;
@@ -13,6 +14,8 @@ export function FanBaseDashboard({ match }: { match: Match | null }) {
   const { address, isConnected } = useAccount();
   const { connect, connectors, isPending } = useConnect();
   const { disconnect } = useDisconnect();
+  const chainId = useChainId();
+  const { switchChain, isPending: isSwitching } = useSwitchChain();
   const [consent, setConsent] = useState(false);
   const [handle, setHandle] = useState("");
   const [application, setApplication] = useState<Application | null>(null);
@@ -65,11 +68,11 @@ export function FanBaseDashboard({ match }: { match: Match | null }) {
       </div> : <div className="unavailable"><CircleAlert size={20} /><div><strong>Live match data is unavailable right now.</strong><p>We do not replace it with made-up fixtures. Retry shortly.</p></div></div>}
 
       <div className="apply-grid">
-        <div className="steps-card"><span className="step-number">01</span><h3>Prove you’re a person, not a scalper.</h3><p>Connect an Injective testnet wallet. Production adds issuer-approved identity checks; a wallet alone is never treated as a human.</p><div className="wallet-row">{isConnected ? <><Check size={17} /><span>{short(address!)}</span></> : <span>Connect wallet to continue</span>}</div></div>
+        <div className="steps-card"><span className="step-number">01</span><h3>Prove you’re a person, not a scalper.</h3><p>Connect an Injective testnet wallet. Production adds issuer-approved identity checks; a wallet alone is never treated as a human.</p><div className="wallet-row">{isConnected && chainId === injectiveTestnet.id ? <><Check size={17} /><span>{short(address!)}</span></> : isConnected ? <button className="network-switch" disabled={isSwitching} onClick={() => switchChain({ chainId: injectiveTestnet.id })}>{isSwitching ? "Switching…" : "Switch to Injective testnet"}</button> : <span>Connect wallet to continue</span>}</div></div>
         <div className="steps-card evidence"><span className="step-number">02</span><h3>Share evidence only if you want.</h3><p>Every eligible fan begins at a neutral score of 50. Opting in can add a capped boost—never a guaranteed win.</p><label className="consent"><input type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} /><span>I consent to public X post checks relevant to this match.</span></label>{consent && <label className="handle"><span>@</span><input value={handle} maxLength={15} onChange={(event) => setHandle(event.target.value.replace(/^@/, ""))} placeholder="yourhandle" aria-label="X handle" /></label>}</div>
         <div className="steps-card payment"><span className="step-number">03</span><h3>Lock a refundable deposit.</h3><p>Everyone pays the same $5 USDC deposit through x402. Paying more can never change your odds.</p><div className="payment-line"><span>Deposit</span><strong>$5.00 USDC</strong></div><button className="secondary" disabled={!application || busy} onClick={startPayment}>Pay via x402 <ChevronRight size={16} /></button></div>
       </div>
-      <div className="apply-panel"><div><p className="eyebrow">Your allocation status</p><h3>{application ? "You’re eligible for the draw." : "Ready when you are."}</h3><p>{application ? application.explanation : "Connect your wallet, then create a verifiable application. Nothing is ranked in a hidden queue."}</p></div>{application ? <div className="score-block"><span>Fan signal score</span><strong>{application.score}</strong><small>×{application.weight.toFixed(2)} draw weight</small></div> : <button className="primary" disabled={!isConnected || !match || busy} onClick={apply}>{busy ? <LoaderCircle className="spin" size={17} /> : "Create application"}<ChevronRight size={17} /></button>}</div>
+      <div className="apply-panel"><div><p className="eyebrow">Your allocation status</p><h3>{application ? "You’re eligible for the draw." : "Ready when you are."}</h3><p>{application ? application.explanation : "Connect your Injective testnet wallet, then create a verifiable application. Nothing is ranked in a hidden queue."}</p></div>{application ? <div className="score-block"><span>Fan signal score</span><strong>{application.score}</strong><small>×{application.weight.toFixed(2)} draw weight</small></div> : <button className="primary" disabled={!isConnected || chainId !== injectiveTestnet.id || !match || busy} onClick={apply}>{busy ? <LoaderCircle className="spin" size={17} /> : "Create application"}<ChevronRight size={17} /></button>}</div>
       {application && <div className="proof"><Check size={17} /><span><strong>Score commitment:</strong> {application.commitment}</span></div>}
       {notice && <p className="notice" role="status">{notice}</p>}
     </section>

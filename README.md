@@ -21,6 +21,16 @@ cd ../mcp && pnpm install && pnpm dev
 
 Copy `web/.env.example` to `web/.env.local` and set real provider credentials before enabling payments or public-post evidence. FanBase intentionally does not fabricate fixture data, X posts, AI scores, or payment receipts when those integrations are unavailable.
 
+Deploy the test pass with a test-only signer held in your shell (never commit it):
+
+```bash
+cd contracts
+FANBASE_ISSUER=0xYourIssuer forge script script/DeployFanBasePass.s.sol:DeployFanBasePass \
+  --rpc-url https://k8s.testnet.json-rpc.injective.network/ --broadcast --private-key "$PRIVATE_KEY"
+```
+
+A real test pass is deployed at [`0x951F…75ba`](https://testnet.blockscout.injective.network/address/0x951F2e74FA66Bec48d8Bd5481C6B95D8147f75ba) on Injective EVM Testnet. It was verified by issuing token `#1` and simulating a holder transfer, which reverted as required.
+
 ## Testnet targets
 
 - Injective EVM testnet: chain ID `1439`
